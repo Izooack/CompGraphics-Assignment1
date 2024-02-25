@@ -53,7 +53,14 @@ class Renderer {
         //   - variable `this.num_curve_sections` should be used for `num_edges`
         //   - variable `this.show_points` should be used to determine whether or not to render vertices
         
-        
+        //  Bezier Curve 1
+        this.drawBezierCurve()
+
+
+        //  Bezier Curve 2
+        this.drawBezierCurve()
+
+
         // Following line is example of drawing a single line
         // (this should be removed after you implement the curve)
         this.drawLine({x: 100, y: 100}, {x: 600, y: 300}, [255, 0, 0, 255], framebuffer);
@@ -65,7 +72,7 @@ class Renderer {
         //   - variable `this.num_curve_sections` should be used for `num_edges`
         //   - variable `this.show_points` should be used to determine whether or not to render vertices
         
-        
+        // make sure to use this.num_curve_sections to set the number of edges for each circle
     }
 
     // framebuffer:  canvas ctx image data
@@ -87,7 +94,9 @@ class Renderer {
         // TODO: draw your name!
         //   - variable `this.num_curve_sections` should be used for `num_edges`
         //   - variable `this.show_points` should be used to determine whether or not to render vertices
-        
+
+        // test drawVertex
+        this.drawVertex({x: 100, y: 100}, [255, 0, 0, 255], framebuffer);
         
     }
 
@@ -100,6 +109,28 @@ class Renderer {
     // framebuffer:  canvas ctx image data
     drawBezierCurve(p0, p1, p2, p3, num_edges, color, framebuffer) {
         // TODO: draw a sequence of straight lines to approximate a Bezier curve
+
+        if (this.show_points) {
+            this.drawVertex(p0, [0, 0, 0, 255], framebuffer);
+            this.drawVertex(p1, color, framebuffer);
+            this.drawVertex(p2, color, framebuffer);
+            this.drawVertex(p3, [0, 0, 0, 255], framebuffer);
+        }
+
+    function bezierCurve(t, p0, p1, p2, p3) {
+        const u = 1 - t;
+        const tt = t * t;
+        const uu = u * u;
+        const uuu = uu * u;
+        const ttt = tt * t;
+
+        const p = {
+            x: uuu * p0.x + 3 * uu * t * p1.x + 3 * u * tt * p2.x + ttt * p3.x,
+            y: uuu * p0.y + 3 * uu * t * p1.y + 3 * u * tt * p2.y + ttt * p3.y
+        };
+
+        return p;
+    }
         
         
     }
@@ -128,8 +159,12 @@ class Renderer {
     // color:        array of int [R, G, B, A]
     // framebuffer:  canvas ctx image data
     drawVertex(v, color, framebuffer) {
-        // TODO: draw some symbol (e.g. small rectangle, two lines forming an X, ...) centered at position `v`
-        
+        // draws an X centered at the vertex positioned at 'v'
+        // first line is from (x-5, y-5) to (x+5, y+5), which has a positive slope
+        this.drawLine({x: Math.round(v.x - 5), y: Math.round(v.y - 5)}, {x: Math.round(v.x + 5), y: Math.round(v.y + 5)}, color, framebuffer);
+
+        // second line is from (x-5, y+5) to (x+5, y-5), which has a negative slope
+        this.drawLine({x: Math.round(v.x - 5), y: Math.round(v.y + 5)}, {x: Math.round(v.x + 5), y: Math.round(v.y - 5)}, color, framebuffer);
         
     }
     
