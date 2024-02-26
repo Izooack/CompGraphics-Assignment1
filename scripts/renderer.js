@@ -53,12 +53,12 @@ class Renderer {
         //   - variable `this.num_curve_sections` should be used for `num_edges`
         //   - variable `this.show_points` should be used to determine whether or not to render vertices
         
-        //  Bezier Curve 1
-        this.drawBezierCurve()
+        //  Red Bezier Curve 1
+        this.drawBezierCurve({x: 50, y: 500}, {x: 100, y: 300}, {x: 200, y: 300}, {x: 250, y: 500}, this.num_curve_sections, [255, 0, 0, 255], framebuffer);
 
 
-        //  Bezier Curve 2
-        this.drawBezierCurve()
+        //  Blue Bezier Curve 2
+        this.drawBezierCurve({x: 100, y: 200}, {x: 50, y: 400}, {x: 250, y: 400}, {x: 200, y: 200}, this.num_curve_sections, [0, 0, 255, 255], framebuffer);
 
 
         // Following line is example of drawing a single line
@@ -109,6 +109,20 @@ class Renderer {
     // framebuffer:  canvas ctx image data
     drawBezierCurve(p0, p1, p2, p3, num_edges, color, framebuffer) {
         // TODO: draw a sequence of straight lines to approximate a Bezier curve
+        let previousX = p0.x;
+        let previousY = p0.y;
+        let previousPoint = {x: previousX, y: previousY};
+        
+
+        for (let i = 0; i <= num_edges; i++){
+            let t = i / num_edges;
+            let currentX = Math.round((1-t)**3 * p0.x + 3*(1-t)**2 * t * p1.x + 3*(1-t) * t**2 * p2.x + t**3 * p3.x);
+            let currentY = Math.round((1-t)**3 * p0.y + 3*(1-t)**2 * t * p1.y + 3*(1-t) * t**2 * p2.y + t**3 * p3.y);
+            let currentPoint = {x: currentX, y: currentY};
+            this.drawLine({x: previousX, y: previousY}, {x: currentX, y: currentY}, color, framebuffer);
+            previousPoint = currentPoint;
+        }
+
 
         if (this.show_points) {
             this.drawVertex(p0, [0, 0, 0, 255], framebuffer);
@@ -117,21 +131,6 @@ class Renderer {
             this.drawVertex(p3, [0, 0, 0, 255], framebuffer);
         }
 
-    function bezierCurve(t, p0, p1, p2, p3) {
-        const u = 1 - t;
-        const tt = t * t;
-        const uu = u * u;
-        const uuu = uu * u;
-        const ttt = tt * t;
-
-        const p = {
-            x: uuu * p0.x + 3 * uu * t * p1.x + 3 * u * tt * p2.x + ttt * p3.x,
-            y: uuu * p0.y + 3 * uu * t * p1.y + 3 * u * tt * p2.y + ttt * p3.y
-        };
-
-        return p;
-    }
-        
         
     }
 
@@ -142,8 +141,14 @@ class Renderer {
     // framebuffer:  canvas ctx image data
     drawCircle(center, radius, num_edges, color, framebuffer) {
         // TODO: draw a sequence of straight lines to approximate a circle
-        
-        
+        let angleStep = 2 * Math.PI / num_edges;
+        for (let i = 1; i <= num_edges; i++) {
+            let polarAngle = i * angleStep;
+            let currentPoint = {
+                x: Math.round(center.x + radius * Math.cos(polarAngle)),
+                y: Math.round(center.y + radius * Math.sin(polarAngle))
+            };
+        }
     }
     
     // vertex_list:  array of object [{x: __, y: __}, {x: __, y: __}, ..., {x: __, y: __}]
