@@ -60,10 +60,6 @@ class Renderer {
         //  Blue Bezier Curve 2
         this.drawBezierCurve({x: 100, y: 200}, {x: 50, y: 400}, {x: 250, y: 400}, {x: 200, y: 200}, this.num_curve_sections, [0, 0, 255, 255], framebuffer);
 
-
-        // Following line is example of drawing a single line
-        // (this should be removed after you implement the curve)
-        this.drawLine({x: 100, y: 100}, {x: 600, y: 300}, [255, 0, 0, 255], framebuffer);
     }
 
     // framebuffer:  canvas ctx image data
@@ -73,30 +69,79 @@ class Renderer {
         //   - variable `this.show_points` should be used to determine whether or not to render vertices
         
         // make sure to use this.num_curve_sections to set the number of edges for each circle
+
+        this.drawCircle({x: 300, y: 300}, 50, this.num_curve_sections, [0, 255, 0, 255], framebuffer);
+
+        this.drawCircle({x: 500, y: 500}, 50, this.num_curve_sections, [0, 0, 255, 255], framebuffer);
+
+
     }
 
     // framebuffer:  canvas ctx image data
     drawSlide2(framebuffer) {
         // TODO: draw at least 2 convex polygons (each with a different number of vertices >= 5)
         //   - variable `this.show_points` should be used to determine whether or not to render vertices
-        
-        
-        // Following lines are example of drawing a single triangle
-        // (this should be removed after you implement the polygon)
-        let point_a = {x:  80, y:  40};
-        let point_b = {x: 320, y: 160};
-        let point_c = {x: 240, y: 360};
-        this.drawTriangle(point_a, point_c, point_b, [0, 128, 128, 255], framebuffer);
+
+        // draws a red house
+        let vertices1 = [{x: 100, y: 100}, {x: 200, y: 100}, {x: 200, y: 200}, {x: 150, y: 250}, {x: 100, y: 200}];
+
+        let vertices2 = [{x: 350, y: 150}, {x: 500, y: 150}, {x: 500, y: 400}, {x: 425, y: 375}, {x: 550, y: 300}, {x: 575, y: 225}];
+
+        // draws a horizontal trapezoid with a vertical trapezoid connected to the right side
+        this.drawConvexPolygon(vertices1, [255, 0, 0, 255], framebuffer);
+        this.drawConvexPolygon(vertices2, [0, 0, 255, 255], framebuffer);
+
+        // When "Show Point Data" is checked, draws Xs on each of the polygon's vertices
+        if (this.show_points) {
+            let vertices1Counter = 0;
+            let vertices2Counter = 0;
+            while (vertices1Counter < vertices1.length && vertices2Counter < vertices2.length) {
+                this.drawVertex(vertices1[i], [0, 0, 0, 255], framebuffer);
+                vertices1Counter++;
+                this.drawVertex(vertices2[i], [0, 0, 0, 255], framebuffer);
+                vertices2Counter++;
+            }
+
+            // for (let i = 0; i < vertices1.length; i++) {
+            //     this.drawVertex(vertices1[i], [0, 0, 0, 255], framebuffer);
+            // }
+            // for (let i = 0; i < vertices2.length; i++) {
+            //     this.drawVertex(vertices2[i], [0, 0, 0, 255], framebuffer);
+            // }
+        }
     }
 
     // framebuffer:  canvas ctx image data
     drawSlide3(framebuffer) {
         // TODO: draw your name!
+        // Name: isaac
         //   - variable `this.num_curve_sections` should be used for `num_edges`
         //   - variable `this.show_points` should be used to determine whether or not to render vertices
 
-        // test drawVertex
-        this.drawVertex({x: 100, y: 100}, [255, 0, 0, 255], framebuffer);
+        // Use lines for letter "i"
+        this.drawLine({x: 100, y: 200}, {x: 100, y: 300}, [255, 0, 0, 255], framebuffer);
+
+        // Use convex polygon to draw a triangle do for the letter "i"
+        // dot should be above y=300
+        this.drawConvexPolygon([{x: 75, y: 310}, {x: 130, y: 310}, {x: 100, y: 335}], [255, 0, 0, 255], framebuffer);
+
+        // Use Bezier curves for letter "s"
+        this.drawBezierCurve({x: 150, y: 250}, {x: 100, y: 200}, {x: 200, y: 200}, {x: 150, y: 250}, this.num_curve_sections, [0, 255, 0, 255], framebuffer);
+
+        // Use circle for letter first "a"
+        this.drawBezierCurve({x: 200, y: 250}, {x: 250, y: 200}, {x: 300, y: 200}, {x: 250, y: 250}, this.num_curve_sections, [0, 255, 0, 255], framebuffer);
+
+        // Use line for first "a" tail
+        this.drawLine({x: 400, y: 300}, {x: 300, y: 200}, [255, 0, 0, 255], framebuffer);
+
+        // Use circle curves for letter second "a"
+        this.drawBezierCurve({x: 300, y: 250}, {x: 350, y: 200}, {x: 400, y: 200}, {x: 350, y: 250}, this.num_curve_sections, [0, 255, 0, 255], framebuffer);
+
+        // Use line for second "a" tail
+        this.drawLine({x: 100, y: 200}, {x: 100, y: 300}, [255, 0, 0, 255], framebuffer);
+
+        // Use Bezier curves for letter "c"
+
         
     }
 
@@ -126,8 +171,8 @@ class Renderer {
 
         if (this.show_points) {
             this.drawVertex(p0, [0, 0, 0, 255], framebuffer);
-            this.drawVertex(p1, color, framebuffer);
-            this.drawVertex(p2, color, framebuffer);
+            this.drawVertex(p1, [75, 75, 75, 255], framebuffer);
+            this.drawVertex(p2, [75, 75, 75, 255], framebuffer);
             this.drawVertex(p3, [0, 0, 0, 255], framebuffer);
         }
 
@@ -141,14 +186,34 @@ class Renderer {
     // framebuffer:  canvas ctx image data
     drawCircle(center, radius, num_edges, color, framebuffer) {
         // TODO: draw a sequence of straight lines to approximate a circle
-        let angleStep = 2 * Math.PI / num_edges;
-        for (let i = 1; i <= num_edges; i++) {
-            let polarAngle = i * angleStep;
-            let currentPoint = {
+
+        let pi = Math.PI;
+        var cartesianCoordinatesList = [];
+
+
+        // need to calculate the angle during every iteration
+        
+        for (let i = 0; i <= num_edges; i++) {
+            let polarAngle = null;
+            let currentOuterPoint = {
                 x: Math.round(center.x + radius * Math.cos(polarAngle)),
                 y: Math.round(center.y + radius * Math.sin(polarAngle))
             };
+            if (cartesianCoordinatesList.includes(currentOuterPoint)) {
+                break;
+            }
+            cartesianCoordinatesList.push(currentOuterPoint);
         }
+
+        // for loop that draws the lines given the circle's outer points
+        let previousPoint = cartesianCoordinatesList[0];
+        for (let point = 0; point < cartesianCoordinatesList.length; point++) {
+            this.drawLine(previousPoint, {x: cartesianCoordinatesList[point].x, y: cartesianCoordinatesList[point].y}, color, framebuffer);
+            if (this.show_points) {
+            this.drawVertex(point, [0, 0, 0, 255], framebuffer);
+            }
+        }
+
     }
     
     // vertex_list:  array of object [{x: __, y: __}, {x: __, y: __}, ..., {x: __, y: __}]
@@ -156,7 +221,15 @@ class Renderer {
     // framebuffer:  canvas ctx image data
     drawConvexPolygon(vertex_list, color, framebuffer) {
         // TODO: draw a sequence of triangles to form a convex polygon
-        
+        // Assumes vertex_list contains 3 or more vertices
+
+        let startVertex = vertex_list[0];
+
+        for (let i = 1; i < vertex_list.length - 1; i++) {
+            let primaryVertex = vertex_list[i];
+            let secondaryVertex = vertex_list[i + 1];
+            this.drawTriangle(startVertex, primaryVertex, secondaryVertex, color, framebuffer);
+        }
         
     }
     
